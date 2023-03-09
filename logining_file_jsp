@@ -1,0 +1,39 @@
+<%@ page import=”java.sql.*%>
+<%@ page language=”java” contentType=”text/html; charset=UTF-8” pageEncoding=”UTF-8” %>
+<%
+	request.setCharacterEncoding(“UTF-8”);
+	String userid = request.getParameter(“userid”);
+	String userpw = request.getParameter(“userpw”);
+	String id = null;
+	String pw = null;
+	try{
+		Connection conn = null;
+		try{
+			Class.forName(“com.mysql.jc.jdbc.Driver”); /*mysql버전이 8버전이상일 경우 ‘com.mysql.cj.jdbc.Driver’을 입력하고, mysql버전이 7버전이하일 경우 ‘com.mysql.jdbc.Driver’을 입력한다. */
+				String dburl = “jdbc:mysql://localhost:3306/데이터베이스이름;
+				String dbid = “접속자ID”;
+				String dbpw = “접속자PW”;
+				conn = DriverManager.getConnection(dburl, dbid, dbpw); //DB접속문
+			}catch(Exception e){
+				e.printStackTrace();
+			}
+			PreparedStatement pstmt = null;
+			ResultSet rs = null;
+			String sql = “SELECT * FROM table WHERE PARAM1(ex. user_id)=? AND PARAM2(ex. user_pw)=?”;
+			pstmt = conn.prepareStatement(sql); //sql문 세팅
+			pstmt.setString(1, PARAM1[userid]);
+			pstmt.setString(2, PARAM2[userpw]);
+			rs = pstmt.executeQuery(); //쿼리문 실행
+			while(rs.next()) {
+				id += rs.getString(“user_id”);
+				pw += rs.getString(“user_pw”);
+			}
+	}catch(Exception e){
+		e.printStackTrace();
+	}
+	if(id != null){
+		response.sendRedirect(“loginok.jsp”); //응답리다이렉트페이지 설정(응답페이지뿌려줄것을 미리 설정)
+	}else{
+		response.sendRedirect(“loginfail.jsp”);
+	}
+%>
